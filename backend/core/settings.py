@@ -225,3 +225,19 @@ AXES_RESET_LOG = True
 
 # Custom User Model
 AUTH_USER_MODEL = "accounts.User"
+
+
+# Stripe
+TRIAL_DAYS = 14
+STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
+STRIPE_WEBHOOK_SECRET = os.getenv("STRIPE_WEBHOOK_SECRET")
+
+
+BASE_URL = "localhost"
+
+
+CSRF_TRUSTED_ORIGINS = [
+    origin.strip()
+    for origin in os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",")
+    if origin.strip()
+]
