@@ -92,7 +92,9 @@ ROOT_URLCONF = 'core.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [
+            BASE_DIR / "accounts" / "templates",
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -241,3 +243,11 @@ CSRF_TRUSTED_ORIGINS = [
     for origin in os.getenv("CSRF_TRUSTED_ORIGINS", "").split(",")
     if origin.strip()
 ]
+
+
+# BREVO
+
+
+BREVO_SENDER_EMAIL=os.getenv("BREVO_SENDER_EMAIL")
+BREVO_API_KEY=os.getenv("BREVO_API_KEY")
+DEFAULT_SENDER_NAME="Todo"
