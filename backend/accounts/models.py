@@ -13,7 +13,13 @@ class User(AbstractUser):
         "SaaS/todo/profile_pic",
         blank=True,
         null=True,
-    )
+    )   
+
+    def save(self, *args, **kwargs):
+        self.username = self.username.strip().lower()
+        self.email = self.email.strip().lower()
+
+        super().save(*args, **kwargs)
 
 
 

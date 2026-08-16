@@ -5,12 +5,14 @@ from .views import (
     SendEmailVerificationView,
     UpdatePendingEmailRequestView,
     VerifyEmailView,
+    LoginView,
     MeView,
 )
 
 
 urlpatterns = [
     path("register/", RegisterView.as_view()),
+    path("login/", LoginView.as_view()),
     path("logout/", LogoutView.as_view()),
     path("email/verify/", SendEmailVerificationView.as_view()),
     path("email/verify/<uuid:code>/", VerifyEmailView.as_view(), name="verify-email"),

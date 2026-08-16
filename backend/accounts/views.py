@@ -64,7 +64,6 @@ class RegisterView(APIView):
             verification_code = EmailVerificationCode.create_for_user(user)
             send_verification_email(user, verification_code)
 
-            login(request, user, backend="django.contrib.auth.backends.ModelBackend")
 
         return Response(
             {
@@ -81,6 +80,54 @@ class RegisterView(APIView):
             status=status.HTTP_201_CREATED,
         )
 
+
+class LoginView(APIView):
+    authentication_classes = []
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        username_or_email = request.data.get("username_or_email", "").strip()
+        password = request.data.get("password", "").strip() 
+
+        if not all([username_or_email, password]):
+            return Response(
+                {"error": "username_or_email and password are required."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        user = User.objects.filter(username=username_or_email).first()
+        if not user:
+            user = User.objects.filter(email__iexact=username_or_email).first()
+
+        if not user:
+            return Response({
+                "error": "Invalid credentials."
+            }, status=status.HTTP_401_UNAUTHORIZED)
+
+        username = user.username
+
+
+        if AxesProxyHandler.is_locked(request, credentials={"username": username}):
+            return Response(
+                {"error": "Account locked: too many login attempts. Please try again later."},
+                status=status.HTTP_403_FORBIDDEN,)
+            
+
+        user = authenticate(request, username=username, password=password)
+        if not user:
+            return Response(
+                {"detail": "Invalid credentials."},
+                status=status.HTTP_401_UNAUTHORIZED,
+            )
+
+        login(request, user, backend="django.contrib.auth.backends.ModelBackend")
+
+        return Response({
+            "detail": "Login successful.",
+        }, status=status.HTTP_200_OK)
+
+        
+        
 
 class LogoutView(APIView):
     def post(self, request):
