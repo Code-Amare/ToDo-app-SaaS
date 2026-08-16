@@ -221,3 +221,7 @@ AXES_LOCKOUT_PARAMETERS = [
 AXES_ENABLE_ACCESS_FAILURE_LOG = True
 
 AXES_RESET_LOG = True
+
+
+# Custom User Model
+AUTH_USER_MODEL = "accounts.User"
