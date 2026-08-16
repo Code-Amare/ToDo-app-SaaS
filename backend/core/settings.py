@@ -37,23 +37,51 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
-INSTALLED_APPS = [
+SHARED_APPS = (
+    'django.contrib.staticfiles',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'rest_framework'
-]
+
+    # Third Party
+    "django_tenants",
+    'rest_framework',
+    'cloudinary',
+    'cloudinary_storage',
+    'axes',
+
+    # Apps
+    'tenants',
+    'public'
+)
+
+
+TENANT_APPS = (
+    'todo',
+)
+
+INSTALLED_APPS = list(SHARED_APPS) + [app for app in TENANT_APPS if app not in SHARED_APPS]
+
+
+TENANT_MODEL = "tenants.Tenant"
+
+TENANT_DOMAIN_MODEL = "tenants.Domain"
+
+PUBLIC_SCHEMA_URLCONF = 'core.public_urls'
+
+SHOW_PUBLIC_IF_NO_TENANT_FOUND = True
 
 MIDDLEWARE = [
     'django_tenants.middleware.main.TenantMainMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+     "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    "axes.middleware.AxesMiddleware",
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -83,7 +111,7 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'django_tenants.postgresql_backend',
         'NAME': os.getenv("DB_NAME"),
         'USER': os.getenv("DB_USER"),
         'PORT': os.getenv("DB_PORT"),
@@ -128,9 +156,23 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.1/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
+STORAGES = {
+    "default": {
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
 
-
+# Cloudinary
+CLOUDINARY_STORAGE = {
+    "CLOUD_NAME": os.getenv("CLOUDINARY_CLOUD_NAME"),
+    "API_KEY": os.getenv("CLOUDINARY_API_KEY"),
+    "API_SECRET": os.getenv("CLOUDINARY_API_SECRET"),
+}
 
 # REST API CONFIGURATION
 
@@ -158,3 +200,23 @@ REST_FRAMEWORK = {
 DATABASE_ROUTERS = (
     'django_tenants.routers.TenantSyncRouter',
 )
+
+# Axes Settings
+AUTHENTICATION_BACKENDS = [
+    "axes.backends.AxesStandaloneBackend",
+    "django.contrib.auth.backends.ModelBackend",
+]
+
+AXES_FAILURE_LIMIT = 5
+
+AXES_COOLOFF_TIME = 1
+
+AXES_RESET_ON_SUCCESS = True
+
+AXES_LOCKOUT_PARAMETERS = [
+    ["username", "ip_address"],
+]
+
+AXES_ENABLE_ACCESS_FAILURE_LOG = True
+
+AXES_RESET_LOG = True
