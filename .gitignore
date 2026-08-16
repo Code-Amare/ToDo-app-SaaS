@@ -1,0 +1,76 @@
+# =========================
+# Django / Python
+# =========================
+
+backend/__pycache__/
+backend/**/*.py[cod]
+backend/**/__pycache__/
+
+# Virtual environments
+backend/venv/
+backend/.venv/
+backend/env/
+backend/.env/
+
+# Django
+backend/db.sqlite3
+backend/db.sqlite3-journal
+backend/staticfiles/
+backend/media/
+
+# Environment variables
+backend/.env
+backend/.env.*
+!backend/.env.example
+
+# Logs
+backend/*.log
+backend/**/*.log
+
+# SSL certificates
+certs/
+certs/cert.pem
+certs/key.pem
+
+
+# =========================
+# React / Node
+# =========================
+
+frontend/node_modules/
+frontend/.vite/
+frontend/dist/
+frontend/build/
+
+# Environment variables
+frontend/.env
+frontend/.env.*
+!frontend/.env.example
+
+
+# =========================
+# General
+# =========================
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDEs
+.vscode/
+.idea/
+
+# Editor files
+*.swp
+*.swo
+
+# Temporary files
+*.tmp
+*.temp
+
+# Debug
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
