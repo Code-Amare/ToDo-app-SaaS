@@ -54,7 +54,8 @@ SHARED_APPS = (
 
     # Apps
     'tenants',
-    'public'
+    'public',
+    'accounts',
 )
 
 
