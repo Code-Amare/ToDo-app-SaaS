@@ -84,3 +84,22 @@ def send_trial_expired_email(user):
         subject="Your trial has ended",
         html_content=html_content,
     )
+
+
+def send_password_reset_email(user, reset_code):
+    reset_url = f"https://{BASE_URL}/accounts/password-reset/{reset_code.code}/"
+
+    html_content = render_to_string(
+        "accounts/emails/password_reset.html",
+        {
+            "user": user,
+            "reset_url": reset_url,
+            "expires_minutes": 15,
+        },
+    )
+
+    send_email(
+        to_email=user.email,
+        subject="Reset your password",
+        html_content=html_content,
+    )

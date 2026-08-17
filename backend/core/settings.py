@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/6.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.1/ref/settings/
 """
+
 import os
 from pathlib import Path
 from dotenv import load_dotenv
@@ -19,7 +20,6 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(BASE_DIR / ".env")
 
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
 
@@ -28,8 +28,7 @@ SECRET_KEY = os.getenv("SECRET_KEY", "dld(*f3$@#$#lkjfoj23jdlkfLKDfjFe)")
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv("DEBUG", False)
-
+DEBUG = os.getenv("DEBUG", "False").lower() in ("true", "1", "yes")
 
 
 ALLOWED_HOSTS = []
@@ -38,88 +37,87 @@ ALLOWED_HOSTS = []
 # Application definition
 
 SHARED_APPS = (
-    'django.contrib.staticfiles',
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-
+    "django.contrib.staticfiles",
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
     # Third Party
     "django_tenants",
-    'rest_framework',
-    'cloudinary',
-    'cloudinary_storage',
-    'axes',
-
+    "rest_framework",
+    "drf_spectacular",
+    "cloudinary",
+    "cloudinary_storage",
+    "axes",
     # Apps
-    'tenants',
-    'public',
-    'accounts',
+    "tenants",
+    "public",
+    "accounts",
 )
 
 
-TENANT_APPS = (
-    'todo',
-)
+TENANT_APPS = ("todo",)
 
-INSTALLED_APPS = list(SHARED_APPS) + [app for app in TENANT_APPS if app not in SHARED_APPS]
+INSTALLED_APPS = list(SHARED_APPS) + [
+    app for app in TENANT_APPS if app not in SHARED_APPS
+]
 
 
 TENANT_MODEL = "tenants.Tenant"
 
 TENANT_DOMAIN_MODEL = "tenants.Domain"
 
-PUBLIC_SCHEMA_URLCONF = 'core.public_urls'
+PUBLIC_SCHEMA_URLCONF = "core.public_urls"
 
 SHOW_PUBLIC_IF_NO_TENANT_FOUND = True
 
 MIDDLEWARE = [
-    'django_tenants.middleware.main.TenantMainMiddleware',
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-     "whitenoise.middleware.WhiteNoiseMiddleware",
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    "django_tenants.middleware.main.TenantMainMiddleware",
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
     "axes.middleware.AxesMiddleware",
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = 'core.urls'
+ROOT_URLCONF = "core.urls"
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [
             BASE_DIR / "accounts" / "templates",
         ],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'core.wsgi.application'
+WSGI_APPLICATION = "core.wsgi.application"
 
 
 # Database
 # https://docs.djangoproject.com/en/6.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django_tenants.postgresql_backend',
-        'NAME': os.getenv("DB_NAME"),
-        'USER': os.getenv("DB_USER"),
-        'PORT': os.getenv("DB_PORT"),
-        'HOST': os.getenv("DB_HOST"),
-        'PASSWORD': os.getenv("DB_PASSWORD"),
+    "default": {
+        "ENGINE": "django_tenants.postgresql_backend",
+        "NAME": os.getenv("DB_NAME"),
+        "USER": os.getenv("DB_USER"),
+        "PORT": os.getenv("DB_PORT"),
+        "HOST": os.getenv("DB_HOST"),
+        "PASSWORD": os.getenv("DB_PASSWORD"),
     }
 }
 
@@ -129,16 +127,16 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
 
@@ -146,9 +144,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = "UTC"
 
 USE_I18N = True
 
@@ -158,7 +156,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/6.1/howto/static-files/
 
-STATIC_URL = 'static/'
+STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 STORAGES = {
@@ -181,28 +179,31 @@ CLOUDINARY_STORAGE = {
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.SessionAuthentication", # This is using Django's Default Sessions auth
+        "rest_framework.authentication.SessionAuthentication",  # This is using Django's Default Sessions auth
     ],
-
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
     ],
-
     "DEFAULT_THROTTLE_CLASSES": [
         "rest_framework.throttling.AnonRateThrottle",
         "rest_framework.throttling.UserRateThrottle",
     ],
-
     "DEFAULT_THROTTLE_RATES": {
         "anon": "20/min",
         "user": "100/min",
     },
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Todo App SaaS API",
+    "DESCRIPTION": "Multi-tenant Todo application API",
+    "VERSION": "1.0.0",
+    "SERVE_URLCONF": "core.public_urls",
 }
 
 # Setting UP Tenants
-DATABASE_ROUTERS = (
-    'django_tenants.routers.TenantSyncRouter',
-)
+DATABASE_ROUTERS = ("django_tenants.routers.TenantSyncRouter",)
 
 # Axes Settings
 AUTHENTICATION_BACKENDS = [
@@ -248,6 +249,10 @@ CSRF_TRUSTED_ORIGINS = [
 # BREVO
 
 
-BREVO_SENDER_EMAIL=os.getenv("BREVO_SENDER_EMAIL")
-BREVO_API_KEY=os.getenv("BREVO_API_KEY")
-DEFAULT_SENDER_NAME="Todo"
+BREVO_SENDER_EMAIL = os.getenv("BREVO_SENDER_EMAIL")
+BREVO_API_KEY = os.getenv("BREVO_API_KEY")
+DEFAULT_SENDER_NAME = "Todo"
+
+
+LOGIN_REDIRECT_URL = "/docs/"
+LOGOUT_REDIRECT_URL = "/api-auth/login/"

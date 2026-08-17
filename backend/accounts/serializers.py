@@ -26,7 +26,7 @@ class UserSerializer(serializers.ModelSerializer):
             "profile_pic",
         ]
 
-    def get_profile_pic(self, obj):
+    def get_profile_pic(self, obj) -> str | None:
         if obj.profile_pic:
             return obj.profile_pic.url
         return None
@@ -61,9 +61,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     def validate_email(self, value):
         if User.objects.filter(email__iexact=value).exists():
-            raise serializers.ValidationError(
-                "A user with this email already exists."
-            )
+            raise serializers.ValidationError("A user with this email already exists.")
         return value
 
     def create(self, validated_data):
@@ -77,10 +75,11 @@ class RegisterSerializer(serializers.ModelSerializer):
         return user
 
 
-
 class UpdateUserSerializer(serializers.ModelSerializer):
     profile_pic = serializers.ImageField(required=False, allow_null=True)
-    remove_profile_pic = serializers.BooleanField(write_only=True, required=False, default=False)
+    remove_profile_pic = serializers.BooleanField(
+        write_only=True, required=False, default=False
+    )
 
     class Meta:
         model = User
@@ -106,7 +105,8 @@ class UpdateUserSerializer(serializers.ModelSerializer):
         instance = self.instance
 
         has_field_change = any(
-            attrs.get(field) is not None and getattr(instance, field) != attrs.get(field)
+            attrs.get(field) is not None
+            and getattr(instance, field) != attrs.get(field)
             for field in ("username", "first_name", "last_name")
         )
         has_pic_change = new_pic is not None or (remove_pic and instance.profile_pic)
@@ -133,3 +133,34 @@ class UpdateUserSerializer(serializers.ModelSerializer):
 
         instance.save()
         return instance
+
+
+# DRF spectacular
+
+
+class LoginRequestSerializer(serializers.Serializer):
+    username_or_email = serializers.CharField()
+    password = serializers.CharField(write_only=True)
+
+
+class EmailVerificationRequestSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+
+class UpdatePendingEmailRequestSerializer(serializers.Serializer):
+    username = serializers.CharField()
+    password = serializers.CharField(write_only=True)
+    new_email = serializers.EmailField()
+
+
+class PasswordResetRequestSerializer(serializers.Serializer):
+    email = serializers.EmailField()
+
+
+class ConfirmPasswordResetSerializer(serializers.Serializer):
+    new_password = serializers.CharField(write_only=True)
+
+
+class ChangePasswordSerializer(serializers.Serializer):
+    current_password = serializers.CharField(write_only=True)
+    new_password = serializers.CharField(write_only=True)

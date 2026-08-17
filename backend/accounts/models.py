@@ -56,4 +56,11 @@ class EmailVerificationCode(BaseVerificationCode):
         on_delete=models.CASCADE,
         related_name="email_verification_code",
     )
- 
+
+
+class PasswordResetCode(BaseVerificationCode):
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE,
+        related_name="password_reset_code",
+    )
