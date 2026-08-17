@@ -38,6 +38,23 @@ User = get_user_model()
 BASE_URL = settings.BASE_URL
 
 
+import re
+
+
+def make_domain_slug(username: str) -> str:
+    slug = username.lower()
+    slug = re.sub(r"[^a-z0-9]+", "-", slug)  # anything not alphanumeric -> hyphen
+    slug = slug.strip("-")  # no leading/trailing hyphen
+    return slug
+
+
+def make_schema_name(username: str) -> str:
+    # Schema names: underscores/letters/digits are fine, keep close to the original.
+    slug = username.lower()
+    slug = re.sub(r"[^a-z0-9_]+", "_", slug)
+    return slug.strip("_")
+
+
 class RegisterView(APIView):
     permission_classes = []
 
@@ -51,9 +68,9 @@ class RegisterView(APIView):
         serializer.is_valid(raise_exception=True)
         validated_data = serializer.validated_data
 
-        base_slug = validated_data["username"].lower()
-        schema_name = base_slug
-        domain_url = f"{base_slug}.{BASE_URL}"
+        schema_name = make_schema_name(validated_data["username"])  # e.g. "amare_m"
+        domain_slug = make_domain_slug(validated_data["username"])  # e.g. "amare-m"
+        domain_url = f"{domain_slug}.{BASE_URL}"
 
         trial_end = timezone.now() + timedelta(days=settings.TRIAL_DAYS)
 
@@ -62,7 +79,7 @@ class RegisterView(APIView):
         # nesting it inside savepoints is a known source of flaky failures.
         tenant = Tenant.objects.create(
             schema_name=schema_name,
-            name=base_slug,
+            name=domain_slug,
         )
 
         try:
